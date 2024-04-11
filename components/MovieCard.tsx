@@ -14,7 +14,7 @@ const MovieCard = ({ movie }: { movie: Movie }) => {
       <div className="movie-card" onClick={openModal}>
         <img
           src={`${baseImgUrl}${movie?.backdrop_path || movie?.poster_path}`}
-          className="thumpnail"
+          className="thumbnail"
           alt={movie?.title || movie?.name}
         />
         <div className="border"></div>
