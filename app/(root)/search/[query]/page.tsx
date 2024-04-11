@@ -5,7 +5,7 @@ const SearchPage = ({ params } : {params : {query: string} }) => {
     const search = params.query
   return (
     <>
-    <Navbar/>
+    <Navbar />
     </>
   )
 }
