@@ -21,8 +21,7 @@ export const fetchGenreMovie = async () => {
       `/discover/movie?with_genres=${genre.id}`
     );
 
-    genre.movies = data.results;
-
-    return genres
+    genre.movies = data.results; 
   }
+  return genres
 };

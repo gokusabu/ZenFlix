@@ -20,5 +20,5 @@ export interface Movie {
 export interface Genre {
   id : number
   name: string
-  movies?: Movie[]
+  movies: Movie[]
 }
