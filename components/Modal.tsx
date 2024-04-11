@@ -1,5 +1,6 @@
-import { Movie } from '@lib/types'
-import React, { useEffect } from 'react'
+"use client"
+import { Movie, Video } from '@lib/types'
+import React, { useEffect, useState } from 'react'
 
 interface Props{
     movie:Movie;
@@ -7,6 +8,9 @@ interface Props{
 }
 
 const Modal = ({movie ,  closeModal}: Props) => {
+
+  const [video,setVideo] = useState("")
+
     const options = {
         method: 'GET',
         headers: {
@@ -19,7 +23,10 @@ const Modal = ({movie ,  closeModal}: Props) => {
         try{
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/movie/${movie.id}?append_to_response=videos`,options)
             const data = await response.json()
-            console.log("movie data",data)
+            if(data?.videos){
+              const index = data.videos.results.findIndex((video : Video)=>video.type === "Trailer")
+              setVideo(data.videos.results[index].key)
+            }
         }catch(err){
             console.log("error fetchinhg movie details" , (err))
         }
