@@ -1,11 +1,11 @@
 "use client"
 import { Search } from "@mui/icons-material";
 import Link from "next/link";
-import { Router } from "next/router";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const Navbar = () => {
-  const router = Router
+  const router = useRouter()
   const [search, setSearch] = useState<string>("");
 
   const [dropDownMenu, setDropDownMenu] = useState<boolean>(false);

@@ -1,0 +1,26 @@
+import { searchMovies } from "@actions/movieData";
+import { Movie } from "@lib/types";
+import React from "react";
+import MovieCard from "./MovieCard";
+
+const SearchResults = async ({ query }: { query: string }) => {
+  let searchedMovies: Movie[] = [];
+  searchedMovies = await searchMovies(query);
+
+  return searchedMovies.length === 0 ? (
+    <div className="search-page">
+      <h1 className="text-heading2-bold text-white">No Movies Found</h1>
+    </div>
+  ) : (
+    <div className="search-page">
+      <h1 className="text-heading2-bold text-white">Search Results For {query}</h1>
+      <div className="list">
+        {searchedMovies.map((movie) => (
+          <MovieCard key={movie.id} movie={movie} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default SearchResults;
