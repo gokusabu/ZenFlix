@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
   EmailOutlined,
   LockOutlined,
@@ -7,7 +7,7 @@ import {
 } from "@mui/icons-material";
 import { headers } from "next/headers";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
@@ -18,30 +18,8 @@ interface FormData {
 }
 
 const AuthForm = ({ type }: { type: "register" | "login" }) => {
+  const router = useRouter();
 
-  const router = useRouter()
-
-  const onSubmit : SubmitHandler<FormData> = async (data:FormData)=>{
-    let res
-
-    if(type = "register")
-      {
-        res = await fetch('/api/auth/register',{
-          method:"POST",
-          headers:{
-            "Content-Type" : "application/json",
-          },
-          body:JSON.stringify(data) 
-        })
-
-        if(res.ok){
-          router.push('/login')
-        }else{
-          toast.error("Something Went Wrong")
-        }
-      }
-    
-  }
   const {
     register,
     handleSubmit,
@@ -52,6 +30,32 @@ const AuthForm = ({ type }: { type: "register" | "login" }) => {
         ? { username: "", email: "", password: "" }
         : { email: "", password: "" },
   });
+
+  const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
+    let res
+
+    if (type === "register") {
+      try{
+        res = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+          
+        });
+  
+        if (res.ok) {
+          router.push("/login");
+        } else {
+          toast.error("Something went wrong");
+        }
+      }catch(err){
+        console.log(err)
+      }
+      
+    }
+  };
   return (
     <div className="auth">
       <div className="overlay">
@@ -61,24 +65,26 @@ const AuthForm = ({ type }: { type: "register" | "login" }) => {
           <form className="form" onSubmit={handleSubmit(onSubmit)}>
             {type === "register" && (
               <>
-              <div className="input">
-                <input
-                  {...register("username", {
-                    required: "username is required!!",
-                    validate: (value: string | undefined) => {
-                      if (!value || value.length < 2) {
-                        return "Username must contain more than 2 characters";
-                      }
-                      return true;
-                    },
-                  })}
-                  type="text"
-                  placeholder="username"
-                  className="input-field"
-                />
-                <PersonOutline sx={{ color: "white" }} />
-              </div>
-              {errors.username && <p className="error">{errors.username.message}</p>}
+                <div className="input">
+                  <input
+                    {...register("username", {
+                      required: "username is required!!",
+                      validate: (value: string | undefined) => {
+                        if (!value || value.length < 2) {
+                          return "Username must contain more than 2 characters";
+                        }
+                        return true;
+                      },
+                    })}
+                    type="text"
+                    placeholder="username"
+                    className="input-field"
+                  />
+                  <PersonOutline sx={{ color: "white" }} />
+                </div>
+                {errors.username && (
+                  <p className="error">{errors.username.message}</p>
+                )}
               </>
             )}
             <div className="input">
@@ -115,7 +121,9 @@ const AuthForm = ({ type }: { type: "register" | "login" }) => {
               />
               <LockOutlined sx={{ color: "white" }} />
             </div>
-            {errors.password && <p className="error">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="error">{errors.password.message}</p>
+            )}
             <button className="button" type="submit">
               {type === "register" ? "Join Now" : "Let's Watch"}
             </button>
