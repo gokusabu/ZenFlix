@@ -1,6 +1,7 @@
 "use client";
 import { Genre, Movie, Video } from "@lib/types";
 import { AddCircle, CancelRounded } from "@mui/icons-material";
+import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 
 interface Props {
@@ -11,6 +12,10 @@ interface Props {
 const Modal = ({ movie, closeModal }: Props) => {
   const [video, setVideo] = useState("");
   const[genres,setGenres] = useState<Genre[]>([])
+
+  const {data:session} = useSession()
+
+  console.log("session",session)
 
   const options = {
     method: "GET",
@@ -27,7 +32,6 @@ const Modal = ({ movie, closeModal }: Props) => {
         options
       );
       const data = await response.json();
-      console.log("data",data)
       if (data?.videos) {
         const index = data.videos.results.findIndex(
           (video: Video) => video.type === "Trailer"
