@@ -22,7 +22,7 @@ export const GET =async(req:NextRequest,{params}:{params:{email:string}}) =>{
     }
 }
 
-export const POST = =async(req:NextRequest,{params}:{params:{email:string}}) =>{
+export const POST = async(req:NextRequest,{params}:{params:{email:string}}) =>{
     try{
         await connectToDB()
 
