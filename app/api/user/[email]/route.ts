@@ -21,3 +21,36 @@ export const GET =async(req:NextRequest,{params}:{params:{email:string}}) =>{
         throw new Error(`Error getting the user ${err.message}`)
     }
 }
+
+export const POST = =async(req:NextRequest,{params}:{params:{email:string}}) =>{
+    try{
+        await connectToDB()
+
+        const {email} = params
+
+        const user = await User.findOne({enmail:email})
+
+        if(!user){
+            throw new Error("User not Found")
+        }
+
+        const {movieiId} = await req.json() //we sent this movieId through the body of the request to backend
+
+        const isFavorite = await user.favoites.includes(movieiId)
+
+        if(isFavorite){
+            user.favorites = user.favorites.filter((id:number)=> id !== movieiId)
+        }
+        else{
+            user.favorites.push(movieiId)
+        }
+
+        await user.save()
+
+        return new Response(JSON.stringify(user), { status : 200 } )
+
+    }catch(err:any){
+        console.log(err)
+        throw new Error(`Error getting the user ${err.message}`)
+    }
+}

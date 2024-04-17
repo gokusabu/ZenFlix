@@ -1,6 +1,6 @@
 "use client";
 import { Genre, Movie, Video } from "@lib/types";
-import { AddCircle, CancelRounded } from "@mui/icons-material";
+import { AddCircle, CancelRounded, RemoveCircle } from "@mui/icons-material";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 
@@ -9,13 +9,40 @@ interface Props {
   closeModal: () => void;
 }
 
+interface user {
+  username: string;
+  email: string;
+  favorites: number[];
+}
+
 const Modal = ({ movie, closeModal }: Props) => {
   const [video, setVideo] = useState("");
-  const[genres,setGenres] = useState<Genre[]>([])
+  const [genres, setGenres] = useState<Genre[]>([]);
 
-  const {data:session} = useSession()
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [isFavorite,setIsFavorite] = useState(false)
 
-  console.log("session",session)
+  const { data: session } = useSession();
+
+  console.log("session", session);
+
+  const getUser = async () => {
+    try{
+      const response = await fetch(`/api/user/${session?.user?.email}`);
+      const data = await response.json();
+      setUser(data);
+      setLoading(false);
+      setIsFavorite(data.favorites.find((item:number)=> item === movie.id))
+    }catch(err){
+      console.log("Error fetching data",err);
+    }
+  };
+
+  useEffect(()=>{
+    if(session)
+    getUser()
+  },[session])
 
   const options = {
     method: "GET",
@@ -39,8 +66,8 @@ const Modal = ({ movie, closeModal }: Props) => {
         setVideo(data.videos.results[index].key);
       }
 
-      if(data?.genres){
-        setGenres(data.genres)
+      if (data?.genres) {
+        setGenres(data.genres);
       }
     } catch (err) {
       console.log("error fetchinhg movie details", err);
@@ -72,7 +99,12 @@ const Modal = ({ movie, closeModal }: Props) => {
           </div>
           <div className="flex gap-3">
             <p className="text-base-bold">Add to List</p>
-            <AddCircle className="cursor-pointer text-pink-1" />
+            {isFavorite ? (
+              <RemoveCircle className="cursor-pointer text-pink-1"/>
+            ):(
+              <AddCircle className="cursor-pointer text-pink-1" />
+            )}
+            
           </div>
         </div>
         <div className="flex-gap-2">
@@ -86,7 +118,9 @@ const Modal = ({ movie, closeModal }: Props) => {
         </div>
         <div className="flex gap-2">
           <p className="text-base-bold">Genres:</p>
-          <p className="text-base-light">{genres.map((genre)=>genre.name).join(", ")}</p>
+          <p className="text-base-light">
+            {genres.map((genre) => genre.name).join(", ")}
+          </p>
         </div>
       </div>
     </div>
