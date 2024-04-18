@@ -28,21 +28,21 @@ export const POST = async(req:NextRequest,{params}:{params:{email:string}}) =>{
 
         const {email} = params
 
-        const user = await User.findOne({enmail:email})
+        const user = await User.findOne({email:email})
 
         if(!user){
             throw new Error("User not Found")
         }
 
-        const {movieiId} = await req.json() //we sent this movieId through the body of the request to backend
+        const {movieId} = await req.json() //we sent this movieId through the body of the request to backend
 
-        const isFavorite = await user.favoites.includes(movieiId)
+        const isFavorite = user.favorites.includes(movieId)
 
         if(isFavorite){
-            user.favorites = user.favorites.filter((id:number)=> id !== movieiId)
+            user.favorites = user.favorites.filter((id:number) => id !== movieId)
         }
         else{
-            user.favorites.push(movieiId)
+            user.favorites.push(movieId)
         }
 
         await user.save()

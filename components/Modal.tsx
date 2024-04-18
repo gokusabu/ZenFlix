@@ -3,13 +3,14 @@ import { Genre, Movie, Video } from "@lib/types";
 import { AddCircle, CancelRounded, RemoveCircle } from "@mui/icons-material";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
+import Loader from "./Loader";
 
 interface Props {
   movie: Movie;
   closeModal: () => void;
 }
 
-interface user {
+interface User {
   username: string;
   email: string;
   favorites: number[];
@@ -20,12 +21,10 @@ const Modal = ({ movie, closeModal }: Props) => {
   const [genres, setGenres] = useState<Genre[]>([]);
 
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState <User | null>(null);
   const [isFavorite,setIsFavorite] = useState(false)
 
   const { data: session } = useSession();
-
-  console.log("session", session);
 
   const getUser = async () => {
     try{
@@ -43,6 +42,23 @@ const Modal = ({ movie, closeModal }: Props) => {
     if(session)
     getUser()
   },[session])
+  
+  const handleMyList = async()=>{
+    try{
+      const res = await fetch(`/api/user/${session?.user?.email}`,{
+        method:"POST",
+        headers:{
+          "Content-Type":"Application/json"
+        },
+        body:JSON.stringify({movieId:movie.id})
+      })
+      const data = await res.json()
+      setUser(data)
+      setIsFavorite(data.favorites.find((item:number)=> item === movie.id))
+    }catch(err){
+      console.log("error fetching List",err)
+    }
+  }
 
   const options = {
     method: "GET",
@@ -77,7 +93,7 @@ const Modal = ({ movie, closeModal }: Props) => {
   useEffect(() => {
     getMovieDetails();
   }, [movie]);
-  return (
+  return loading ? <Loader/> : (
     <div className="modal">
       <button className="modal-close">
         <CancelRounded
@@ -100,9 +116,15 @@ const Modal = ({ movie, closeModal }: Props) => {
           <div className="flex gap-3">
             <p className="text-base-bold">Add to List</p>
             {isFavorite ? (
-              <RemoveCircle className="cursor-pointer text-pink-1"/>
-            ):(
-              <AddCircle className="cursor-pointer text-pink-1" />
+              <RemoveCircle
+                className="cursor-pointer text-pink-1"
+                onClick={handleMyList}
+              />
+            ) : (
+              <AddCircle
+                className="cursor-pointer text-pink-1"
+                onClick={handleMyList}
+              />
             )}
             
           </div>
