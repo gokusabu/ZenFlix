@@ -43,22 +43,22 @@ const Modal = ({ movie, closeModal }: Props) => {
     getUser()
   },[session])
   
-  const handleMyList = async()=>{
-    try{
-      const res = await fetch(`/api/user/${session?.user?.email}`,{
-        method:"POST",
-        headers:{
-          "Content-Type":"Application/json"
+  const handleMyList = async () => {
+    try {
+      const res = await fetch(`/api/user/${session?.user?.email}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        body:JSON.stringify({movieId:movie.id})
-      })
-      const data = await res.json()
-      setUser(data)
-      setIsFavorite(data.favorites.find((item:number)=> item === movie.id))
-    }catch(err){
-      console.log("error fetching List",err)
+        body: JSON.stringify({ movieId: movie.id }),
+      });
+      const data = await res.json();
+      setUser(data);
+      setIsFavorite(data.favorites.find((item: number) => item === movie.id))
+    } catch (err) {
+      console.log("Failed to handle my list", err);
     }
-  }
+  };
 
   const options = {
     method: "GET",

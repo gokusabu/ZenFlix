@@ -8,7 +8,7 @@ export const GET =async(req:NextRequest,{params}:{params:{email:string}}) =>{
 
         const {email} = params
 
-        const user = await User.findOne({enmail:email})
+        const user = await User.findOne({email:email})
 
         if(!user){
             throw new Error("User not Found")
