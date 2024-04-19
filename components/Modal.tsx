@@ -4,6 +4,7 @@ import { AddCircle, CancelRounded, RemoveCircle } from "@mui/icons-material";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import Loader from "./Loader";
+import { useRouter } from "next/navigation";
 
 interface Props {
   movie: Movie;
@@ -17,6 +18,7 @@ interface User {
 }
 
 const Modal = ({ movie, closeModal }: Props) => {
+  const router = useRouter()
   const [video, setVideo] = useState("");
   const [genres, setGenres] = useState<Genre[]>([]);
 
@@ -33,6 +35,7 @@ const Modal = ({ movie, closeModal }: Props) => {
       setUser(data);
       setLoading(false);
       setIsFavorite(data.favorites.find((item:number)=> item === movie.id))
+      router.refresh()
     }catch(err){
       console.log("Error fetching data",err);
     }
@@ -55,6 +58,7 @@ const Modal = ({ movie, closeModal }: Props) => {
       const data = await res.json();
       setUser(data);
       setIsFavorite(data.favorites.find((item: number) => item === movie.id))
+      router.refresh()
     } catch (err) {
       console.log("Failed to handle my list", err);
     }
