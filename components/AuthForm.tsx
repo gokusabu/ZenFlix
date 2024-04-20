@@ -139,11 +139,11 @@ const AuthForm = ({ type }: { type: "register" | "login" }) => {
             </button>
           </form>
           {type === "register" ? (
-            <Link href="/register">
+            <Link href="/login">
               <p className="link">Already have an Account? Login Here</p>
             </Link>
           ) : (
-            <Link href="/login">
+            <Link href="/register">
               <p className="link">Don't have an Account? Register Here</p>
             </Link>
           )}
